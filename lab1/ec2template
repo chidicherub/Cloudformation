@@ -1,0 +1,40 @@
+Parameters:
+  MyInstanceType:
+    Description: Allows options for instance type, with default stated
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t2.large
+      - m1.small
+      - m1.large
+      - t3.micro
+  Mykeypair: 
+    Description: Keypair for us-east-1 region
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: mayclass-keypair
+Mappings:
+    AMIRegionMap: 
+      us-east-1:
+        MyAMI1: ami-0ff8a91507f77f867
+      us-west-1:
+        MyAMI1: ami-0bdb828fd58c52235
+      eu-west-1:
+        MyAMI1: ami-047bb4163c506cd98
+      ap-northeast-1:
+        MyAMI1: ami-06cd52961ce9f0d85
+      ap-southeast-1:
+        MyAMI1: ami-08569b978cc4dfa10
+Resources:
+  myInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties: 
+      ImageId: !FindInMap [AMIRegionMap, !Ref "AWS::Region", MyAMI1]
+      InstanceType: !Ref MyInstanceType
+      KeyName: !Ref Mykeypair
+      SecurityGroupIds:  # Use SecurityGroupIds for EC2 instance
+        - sg-089ca4b9bd86c0fef  # Correct formatting for list
+      Tags: 
+        - Key: "ec2-tag"
+          Value: "Chidi"
+      SubnetId: subnet-048ebfbc2fb6e351c

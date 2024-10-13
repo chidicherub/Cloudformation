@@ -1,0 +1,91 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template to create a PostgreSQL RDS instance.
+
+Parameters:
+  DBInstanceID:
+    Default: Postgresdbinstance
+    Description: Database instance ID
+    Type: String
+
+  DBName:
+    Default: CloudformationDB
+    Description: My database name
+    Type: String
+
+  DBPasswordSSMParameter:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: "Retrieve stored DB password from SSM Parameter Store"
+    Default: "/database/password"  # Use the correct path for your SSM parameter
+    NoEcho: true
+
+  DBUsernameSSMParameter:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: "Retrieve stored DB username from SSM Parameter Store"
+    NoEcho: true
+    Default: "/database/Cloudformation/Chidi"  # Use the correct path
+
+
+  VpcSubnets:
+    Description: ID of VPC for DB.
+    Type: AWS::EC2::VPC::Id
+    Default: vpc-03b4cce85c72b2127
+
+  DatabaseSubnetId:
+    Description: "List of private subnet IDs within the specified VPC."
+    Type: List<AWS::EC2::Subnet::Id>
+    Default: subnet-07f147d77a54c2668  # Default must be in list format
+    AllowedValues: 
+      - subnet-07f147d77a54c2668
+      - subnet-050254ad15105f570
+
+  DBSecurityGroup: 
+    Type: String
+    Default: sg-0f0496534374b567e
+    Description: security group for Database
+
+  DBInstanceClass:
+    Type: String  # Changed from List<String> to String
+    Default: db.t4g.micro
+    AllowedValues:
+      - db.t3.medium
+      - db.t3.micro
+      - db.m5.large
+      - db.r6g.large
+      - db.t4g.micro
+
+  AvailabilityZone:
+    Type: AWS::EC2::AvailabilityZone::Name
+    Description: "Select an Availability Zone in the us-east-1 region."
+    Default: us-east-1a
+    AllowedValues:
+      - us-east-1a
+      - us-east-1b
+      - us-east-1c
+
+  DBAllocatedStorage:
+    Default: '25'
+    Description: The size of the database (GiB)
+    Type: Number
+    MinValue: '20'
+    MaxValue: '100'
+
+Resources:
+  myPostgresRds:
+    Type: 'AWS::RDS::DBInstance'
+    Properties: 
+      DBName: !Ref DBName
+      DBInstanceIdentifier: !Ref DBInstanceID
+      DBInstanceClass: !Ref DBInstanceClass
+      Engine: postgres
+      EngineVersion: "14.12"
+      MasterUsername: !Ref DBUsernameSSMParameter  # fetch value from SSM
+      MasterUserPassword: !Ref DBPasswordSSMParameter  # fetch value from ssm
+      VPCSecurityGroups: 
+        - !Ref DBSecurityGroup  
+      AvailabilityZone: !Ref AvailabilityZone
+      PubliclyAccessible: False
+      DBSubnetGroupName: cloudformationdbgrp
+      AllocatedStorage: !Ref DBAllocatedStorage
+      BackupRetentionPeriod: 3
+
+

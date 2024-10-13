@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Launch a dynamic Windows EC2 instance with the latest AMI and security group allowing RDP on port 3389.
+
+Parameters:
+  MyInstanceType:
+    Description: Choose the instance type
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t2.large
+      - m1.small
+      - m1.large
+      - t3.micro
+      
+  MyKeypair: 
+    Description: Keypair for accessing the instance
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::KeyPair::KeyName>
+    Default: /ec2/keypair/cloudformation
+
+  LatestWindowsAmi:
+    Description: Latest Windows AMI from SSM
+    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: /aws/service/ami-windows-latest/Windows_Server-2019-English-Full-Base
+
+Resources: 
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow RDP access
+      VpcId: vpc-03b4cce85c72b2127  
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3389
+          ToPort: 3389
+          CidrIp: 23.84.211.13/32 
+
+  WindowsEc2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestWindowsAmi
+      KeyName: !Ref MyKeypair
+      InstanceType: !Ref MyInstanceType
+      SecurityGroupIds:
+        - !Ref MySecurityGroup
+      Tags: 
+        - Key: "Name"
+          Value: "DynamicWindowsInstance"
+      SubnetId: subnet-0705c93a476d90a6a
+
