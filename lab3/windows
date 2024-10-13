@@ -33,7 +33,7 @@ Resources:
         - IpProtocol: tcp
           FromPort: 3389
           ToPort: 3389
-          CidrIp: 23.84.211.13/32 
+          CidrIp: 0.0.0.0/0
 
   WindowsEc2:
     Type: AWS::EC2::Instance
