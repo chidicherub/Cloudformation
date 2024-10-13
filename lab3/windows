@@ -28,12 +28,12 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allow RDP access
-      VpcId: vpc-03b4cce85c72b2127  
+      VpcId: vpc-xxxxxxxx  change as needed
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 3389
           ToPort: 3389
-          CidrIp: 0.0.0.0/0
+          CidrIp: 0.0.0.0/0  change as needed
 
   WindowsEc2:
     Type: AWS::EC2::Instance
@@ -46,5 +46,5 @@ Resources:
       Tags: 
         - Key: "Name"
           Value: "DynamicWindowsInstance"
-      SubnetId: subnet-0705c93a476d90a6a
+      SubnetId: subnet-xxxxxxxx   change as needed
 
