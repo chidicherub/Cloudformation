@@ -28,19 +28,19 @@ Parameters:
   VpcSubnets:
     Description: ID of VPC for DB.
     Type: AWS::EC2::VPC::Id
-    Default: vpc-03b4cce85c72b2127
+    Default: vpc-xxxxxxxxx  input desired value
 
   DatabaseSubnetId:
     Description: "List of private subnet IDs within the specified VPC."
     Type: List<AWS::EC2::Subnet::Id>
-    Default: subnet-07f147d77a54c2668  # Default must be in list format
+    Default: subnet-xxxxxxxxxx  # Default must be in list format
     AllowedValues: 
-      - subnet-07f147d77a54c2668
-      - subnet-050254ad15105f570
+      - subnet-xxxxxxxx    input desired value
+      - subnet-xxxxxxxx    input desired value
 
   DBSecurityGroup: 
     Type: String
-    Default: sg-0f0496534374b567e
+    Default: sg-xxxxxxxx  input desired value
     Description: security group for Database
 
   DBInstanceClass:
