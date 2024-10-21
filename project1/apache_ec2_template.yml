@@ -1,0 +1,81 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  AWS CloudFormation Sample Template VPC_with_PublicIPs_And_DNS: Sample template
+  that creates a VPC with DNS and public IPs enabled. Note that you are billed
+  for the AWS resources that you use when you create a stack from this template.
+
+Parameters:
+  MyInstanceType:
+    Description: Allows options for instance type, with default stated
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t2.large
+      - m1.small
+      - m1.large
+      - t3.micro
+  MyKeypair: 
+    Description: Keypair for us-west-2 region
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /ec2/keypair/Apache-Cloudformation
+  
+  VpcId:
+    Description: ID of an existing Virtual Private Cloud (VPC).
+    Type: 'AWS::EC2::VPC::Id'
+    
+  PublicSubnetId:
+    Description: ID of an existing public subnet within the specified VPC.
+    Type: 'AWS::EC2::Subnet::Id'
+
+Mappings:
+  AMIRegionMap: 
+    us-east-1:
+      MyAMI1: ami-0ff8a91507f77f867
+    us-west-1:
+      MyAMI1: ami-0bdb828fd58c52235
+    us-west-2:
+      MyAMI1: ami-07c5ecd8498c59db5
+    eu-west-1:
+      MyAMI1: ami-047bb4163c506cd98
+    ap-northeast-1:
+      MyAMI1: ami-06cd52961ce9f0d85
+    ap-southeast-1:
+      MyAMI1: ami-08569b978cc4dfa10
+
+Resources:
+  MyInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties: 
+      ImageId: !FindInMap [AMIRegionMap, !Ref "AWS::Region", MyAMI1]
+      InstanceType: !Ref MyInstanceType
+      KeyName: !Ref MyKeypair
+      SecurityGroupIds:
+        - !ImportValue 'SampleNetworkCrossStack-SecurityGroupID'  # Note the array syntax
+      SubnetId: !ImportValue 'SampleNetworkCrossStack-SubnetID'
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          yum update -y
+          yum install -y httpd
+          service httpd start
+          chkconfig httpd on
+          echo "<html><h1>Hello, World from ${AWS::Region}!</h1></html>" > /var/www/html/index.html
+          
+      Tags: 
+        - Key: "ec2-tag"
+          Value: "Chidi"
+
+  MyEIP:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      InstanceId: !Ref MyInstance
+      
+Outputs:
+  OurInstancePrivateIP:
+    Description: Private IP address of the instance
+    Value: !GetAtt MyInstance.PrivateIp
+  
+  MyInstancePublicDNSName:  
+    Description: Public DNS name of the instance
+    Value: !GetAtt MyInstance.PublicDnsName  

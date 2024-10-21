@@ -1,3 +1,4 @@
+
 Parameters:
   MyInstanceType:
     Description: Allows options for instance type, with default stated
@@ -32,9 +33,6 @@ Resources:
       ImageId: !FindInMap [AMIRegionMap, !Ref "AWS::Region", MyAMI1]
       InstanceType: !Ref MyInstanceType
       KeyName: !Ref Mykeypair
+      SubnetId: subnet-048ebfbc2fb6e351c
       SecurityGroupIds:  # Use SecurityGroupIds for EC2 instance
-        - sg-xxxxxxxxx  # input desired value
-      Tags: 
-        - Key: "ec2-tag"
-          Value: "Chidi"
-      SubnetId: subnet-xxxxxxxxx   input desired value
+
