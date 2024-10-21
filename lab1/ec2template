@@ -1,3 +1,4 @@
+
 Parameters:
   MyInstanceType:
     Description: Allows options for instance type, with default stated
@@ -12,7 +13,7 @@ Parameters:
   Mykeypair: 
     Description: Keypair for us-east-1 region
     Type: AWS::SSM::Parameter::Value<String>
-    Default: mayclass-keypair
+    Default: /ec2/keypair/cloudformation
 Mappings:
     AMIRegionMap: 
       us-east-1:
@@ -33,7 +34,7 @@ Resources:
       InstanceType: !Ref MyInstanceType
       KeyName: !Ref Mykeypair
       SecurityGroupIds:  # Use SecurityGroupIds for EC2 instance
-        - sg-089ca4b9bd86c0fef  # Correct formatting for list
+        - sg-089ca4b9bd86c0fef 
       Tags: 
         - Key: "ec2-tag"
           Value: "Chidi"
