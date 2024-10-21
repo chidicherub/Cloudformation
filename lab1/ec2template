@@ -35,8 +35,4 @@ Resources:
       KeyName: !Ref Mykeypair
       SubnetId: subnet-048ebfbc2fb6e351c
       SecurityGroupIds:  # Use SecurityGroupIds for EC2 instance
-        - sg-089ca4b9bd86c0fef 
-      Tags: 
-        - Key: "ec2-tag"
-          Value: "Chidi"
-      
+
